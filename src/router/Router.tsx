@@ -4,17 +4,27 @@ import { observer } from "mobx-react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
-import { HomeScreen } from "~/screens/HomeScreen";
+import { SoundboardListScreen } from "~/screens/SoundboardListScreen";
 import { QueryExample } from "~/screens/QueryExample";
 import { DropdownExample } from "~/screens/DropdownExample";
 import { FormExample } from "~/screens/FormExample";
 import { useStore } from "~/mobx/utils/useStore";
 import { Header } from "~/components/Header";
+import { CreateSoundboardScreen } from "~/screens/CreateSoundboardScreen";
 
 const Tabs = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-export interface RouterProps {}
+function renderTabs() {
+  return (
+    <Tabs.Navigator>
+      <Tabs.Screen
+        name="SoundboardListScreen"
+        component={SoundboardListScreen}
+      />
+    </Tabs.Navigator>
+  );
+}
 
 export const Router = observer(function Router() {
   const store = useStore();
@@ -29,24 +39,12 @@ export const Router = observer(function Router() {
           },
         }}
       >
-        <Stack.Screen name="Tabs">
-          {() => {
-            return (
-              <Tabs.Navigator>
-                <Tabs.Screen
-                  name="HomeScreen"
-                  component={HomeScreen}
-                  options={{ title: "HomeScreen" }}
-                />
-              </Tabs.Navigator>
-            );
-          }}
-        </Stack.Screen>
+        <Stack.Screen name="TabGroup">{renderTabs}</Stack.Screen>
 
         <Stack.Screen
-          name="QueryExample"
-          component={QueryExample}
-          options={{ title: "QueryExample" }}
+          name="CreateSoundboardScreen"
+          component={CreateSoundboardScreen}
+          options={{ title: "CreateSoundboardScreen" }}
         />
 
         <Stack.Screen
