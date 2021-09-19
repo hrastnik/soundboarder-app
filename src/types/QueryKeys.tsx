@@ -1,1 +1,1 @@
-export type QueryKey = ["peopleList"];
+export type QueryKey = ["recordingList"];

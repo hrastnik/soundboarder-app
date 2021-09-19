@@ -2,7 +2,7 @@ import { StackHeaderProps } from "@react-navigation/stack";
 import { observer } from "mobx-react";
 import React from "react";
 import { StyleSheet } from "react-native";
-import { useSafeArea } from "react-native-safe-area-context";
+import { useSafeArea, useSafeAreaInsets } from "react-native-safe-area-context";
 import { useStore } from "~/mobx/utils/useStore";
 import { constants as C } from "~/style/constants";
 import { shadow } from "~/utils/shadow";
@@ -37,7 +37,7 @@ interface HeaderProps extends StackHeaderProps {}
 
 export const Header = observer(({ options, navigation, back }: HeaderProps) => {
   const canGoBack = !!back;
-  const insets = useSafeArea();
+  const insets = useSafeAreaInsets();
   const insetTop = insets.top;
 
   const HeaderRight = options?.headerRight?.({});

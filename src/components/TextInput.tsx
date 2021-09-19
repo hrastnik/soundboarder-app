@@ -1,14 +1,13 @@
-import React, { ReactNode } from "react";
+import React, { forwardRef, memo, ReactNode } from "react";
 import {
+  StyleSheet,
   TextInput as RNTextInput,
   TextInputProps as RNTextInputProps,
   TextStyle,
-  StyleSheet,
 } from "react-native";
-
 import { constants as C } from "~/style/constants";
-import { View } from "./View";
 import { Text } from "./Text";
+import { View } from "./View";
 
 const S = StyleSheet.create({
   baseStyle: {
@@ -24,6 +23,9 @@ const S = StyleSheet.create({
 });
 
 export interface TextInputProps extends RNTextInputProps {
+  withoutLabel?: boolean;
+  withoutCaption?: boolean;
+
   sizeExtraSmall?: boolean;
   sizeSmall?: boolean;
   sizeMedium?: boolean;
@@ -43,18 +45,18 @@ export interface TextInputProps extends RNTextInputProps {
   weightSemiBold?: boolean;
   weightBold?: boolean;
   weightExtraBold?: boolean;
-  forwardedRef?: React.Ref<RNTextInput>;
 
   label?: string;
-  error?: boolean;
+  isError?: boolean;
   caption?: string;
 
   children?: ReactNode;
 }
 
-class TextInput extends React.PureComponent<TextInputProps> {
-  render() {
-    const {
+export type TextInput = RNTextInput;
+export const TextInput = memo(
+  forwardRef<RNTextInput, TextInputProps>(function TextInput(
+    {
       sizeExtraSmall,
       sizeSmall,
       sizeMedium,
@@ -75,16 +77,19 @@ class TextInput extends React.PureComponent<TextInputProps> {
       weightBold,
       weightExtraBold,
 
-      forwardedRef,
       style,
 
       label = " ",
-      error = false,
+      isError = false,
       caption = " ",
 
-      ...props
-    } = this.props;
+      withoutLabel = false,
+      withoutCaption = false,
 
+      ...props
+    }: TextInputProps,
+    ref
+  ) {
     let fontSize: TextStyle["fontSize"] = C.fontSizeMedium;
     if (sizeExtraSmall) fontSize = C.fontSizeExtraSmall;
     else if (sizeSmall) fontSize = C.fontSizeSmall;
@@ -120,15 +125,17 @@ class TextInput extends React.PureComponent<TextInputProps> {
       // fontFamily = "OpenSans-ExtraBold";
     }
 
-    const borderColor = error ? C.colorTextDanger : C.colorTextTheme;
+    const borderColor = isError ? C.colorTextDanger : C.colorTextTheme;
     return (
       <View>
-        <Text sizeSmall weightSemiBold>
-          {label}
-        </Text>
-        <View style={S.spacer} />
+        {!withoutLabel && (
+          <>
+            <TextInputLabel label={label} />
+            <View style={S.spacer} />
+          </>
+        )}
         <RNTextInput
-          ref={forwardedRef}
+          ref={ref}
           selectionColor={C.colorBackgroundThemeSofter}
           style={[
             S.baseStyle,
@@ -143,19 +150,35 @@ class TextInput extends React.PureComponent<TextInputProps> {
           ]}
           {...props}
         />
-        <View style={S.spacer} />
-        <Text sizeExtraSmall colorDanger={error}>
-          {caption}
-        </Text>
+        {!withoutCaption && (
+          <>
+            <View style={S.spacer} />
+            <TextInputCaption isError={isError} caption={caption} />
+          </>
+        )}
       </View>
     );
-  }
-}
-
-const TextInputWithRef = React.forwardRef<RNTextInput, TextInputProps>(
-  (props, ref) => {
-    return <TextInput forwardedRef={ref} {...props} />;
-  }
+  })
 );
 
-export { TextInputWithRef as TextInput };
+export function TextInputLabel({ label }: { label: string }) {
+  return (
+    <Text sizeSmall weightSemiBold>
+      {label}
+    </Text>
+  );
+}
+
+export const TextInputCaption = ({
+  isError,
+  caption,
+}: {
+  isError: boolean;
+  caption: string;
+}) => {
+  return (
+    <Text sizeExtraSmall colorDanger={isError}>
+      {caption}
+    </Text>
+  );
+};

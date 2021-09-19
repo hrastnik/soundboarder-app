@@ -35,7 +35,13 @@ export function useMSTFastRefresh(
         prevStore.current.navigationStore.navigation
       );
     } catch (error) {
-      throw new Error(`Failed to apply previous snapshot: ${error.message}`);
+      if (error instanceof Error) {
+        throw new Error(`Failed to apply previous snapshot: ${error.message}`);
+      }
+
+      console.log(error);
+
+      throw new Error("Unknown error in MSTFastRefresh");
     }
 
     prevStore.current = rootStore.current;

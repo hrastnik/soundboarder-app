@@ -1,19 +1,16 @@
-import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { observer } from "mobx-react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-
-import { SoundboardListScreen } from "~/screens/SoundboardListScreen";
-import { QueryExample } from "~/screens/QueryExample";
-import { DropdownExample } from "~/screens/DropdownExample";
-import { FormExample } from "~/screens/FormExample";
-import { useStore } from "~/mobx/utils/useStore";
+import { observer } from "mobx-react";
+import React from "react";
 import { Header } from "~/components/Header";
-import { CreateSoundboardScreen } from "~/screens/CreateSoundboardScreen";
+import { useStore } from "~/mobx/utils/useStore";
+import { CreateSoundboardScreen } from "~/screens/CreateSoundboardScreen/CreateSoundboardScreen";
+import { SoundboardListScreen } from "~/screens/SoundboardListScreen";
+import { TabGroupParams, TopLevelStackParams } from "./RouterTypes";
 
-const Tabs = createBottomTabNavigator();
-const Stack = createStackNavigator();
+const Tabs = createBottomTabNavigator<TabGroupParams>();
+const Stack = createStackNavigator<TopLevelStackParams>();
 
 function renderTabs() {
   return (
@@ -32,6 +29,7 @@ export const Router = observer(function Router() {
   return (
     <NavigationContainer ref={store.navigationStore.setNavigation}>
       <Stack.Navigator
+        // initialRouteName="CreateSoundboardScreen"
         screenOptions={{
           headerMode: "screen",
           header(props) {
@@ -45,18 +43,6 @@ export const Router = observer(function Router() {
           name="CreateSoundboardScreen"
           component={CreateSoundboardScreen}
           options={{ title: "CreateSoundboardScreen" }}
-        />
-
-        <Stack.Screen
-          name="DropdownExample"
-          component={DropdownExample}
-          options={{ title: "DropdownExample" }}
-        />
-
-        <Stack.Screen
-          name="FormExample"
-          component={FormExample}
-          options={{ title: "FormExample" }}
         />
       </Stack.Navigator>
     </NavigationContainer>

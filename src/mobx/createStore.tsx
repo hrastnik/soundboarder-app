@@ -1,16 +1,15 @@
+import AudioRecorderPlayer from "react-native-audio-recorder-player";
+import type { ReactNativeBlobUtil } from "react-native-blob-util";
 import { RootStore } from "./RootStore";
-import { PersistenceStatic } from "~/services/createPersistence";
-import { HttpStatic } from "~/services/http/createHttp";
 
 export interface Environment {
-  persistence: PersistenceStatic;
-  http: HttpStatic;
+  // persistence: PersistenceStatic;
+  // http: HttpStatic;
+  fs: ReactNativeBlobUtil["fs"];
+  audioRecorderPlayer: AudioRecorderPlayer;
 }
 
 export async function createStore(environment: Environment) {
   const rootStore = RootStore.create({}, environment);
-  await rootStore.authStore.watchToken();
-  await rootStore.i18n.initialize();
-
   return rootStore;
 }

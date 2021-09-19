@@ -1,39 +1,69 @@
 import React, { ReactNode, forwardRef } from "react";
 import { ViewStyle } from "react-native";
 
-import { constants as C } from "~/style/constants";
+import { constants as C, constants } from "~/style/constants";
 
 export interface WithLayoutProps {
   aspectRatioOne?: boolean;
 
-  /** paddingSmall=4 paddingMedium=8 paddingLarge=16 paddingExtraLarge=32  */
+  /** paddingSmall=8 paddingMedium=16 paddingLarge=24 paddingExtraLarge=32  */
   paddingSmall?: boolean;
-  /** paddingSmall=4 paddingMedium=8 paddingLarge=16 paddingExtraLarge=32  */
+  /** paddingSmall=8 paddingMedium=16 paddingLarge=24 paddingExtraLarge=32  */
   paddingMedium?: boolean;
-  /** paddingSmall=4 paddingMedium=8 paddingLarge=16 paddingExtraLarge=32  */
+  /** paddingSmall=8 paddingMedium=16 paddingLarge=24 paddingExtraLarge=32  */
   paddingLarge?: boolean;
-  /** paddingSmall=4 paddingMedium=8 paddingLarge=16 paddingExtraLarge=32  */
+  /** paddingSmall=8 paddingMedium=16 paddingLarge=24 paddingExtraLarge=32  */
   paddingExtraLarge?: boolean;
-  /** paddingHorizontalSmall=4 paddingHorizontalMedium=8 paddingHorizontalLarge=16 paddingHorizontalExtraLarge=32  */
+  /** paddingSmall=8 paddingMedium=16 paddingLarge=24 paddingExtraLarge=32  */
   paddingHorizontalSmall?: boolean;
-  /** paddingHorizontalSmall=4 paddingHorizontalMedium=8 paddingHorizontalLarge=16 paddingHorizontalExtraLarge=32  */
+  /** paddingSmall=8 paddingMedium=16 paddingLarge=24 paddingExtraLarge=32  */
   paddingHorizontalMedium?: boolean;
-  /** paddingHorizontalSmall=4 paddingHorizontalMedium=8 paddingHorizontalLarge=16 paddingHorizontalExtraLarge=32  */
+  /** paddingSmall=8 paddingMedium=16 paddingLarge=24 paddingExtraLarge=32  */
   paddingHorizontalLarge?: boolean;
-  /** paddingHorizontalSmall=4 paddingHorizontalMedium=8 paddingHorizontalLarge=16 paddingHorizontalExtraLarge=32  */
+  /** paddingSmall=8 paddingMedium=16 paddingLarge=24 paddingExtraLarge=32  */
   paddingHorizontalExtraLarge?: boolean;
-  /** paddingVerticalSmall=4 paddingVerticalMedium=8 paddingVerticalLarge=16 paddingVerticalExtraLarge=32  */
+  /** paddingSmall=8 paddingMedium=16 paddingLarge=24 paddingExtraLarge=32  */
   paddingVerticalSmall?: boolean;
-  /** paddingVerticalSmall=4 paddingVerticalMedium=8 paddingVerticalLarge=16 paddingVerticalExtraLarge=32  */
+  /** paddingSmall=8 paddingMedium=16 paddingLarge=24 paddingExtraLarge=32  */
   paddingVerticalMedium?: boolean;
-  /** paddingVerticalSmall=4 paddingVerticalMedium=8 paddingVerticalLarge=16 paddingVerticalExtraLarge=32  */
+  /** paddingSmall=8 paddingMedium=16 paddingLarge=24 paddingExtraLarge=32  */
   paddingVerticalLarge?: boolean;
-  /** paddingVerticalSmall=4 paddingVerticalMedium=8 paddingVerticalLarge=16 paddingVerticalExtraLarge=32  */
+  /** paddingSmall=8 paddingMedium=16 paddingLarge=24 paddingExtraLarge=32  */
   paddingVerticalExtraLarge?: boolean;
   centerContent?: boolean;
+
+  colorLight?: boolean;
+  colorLightDark?: boolean;
+  colorLightDarker?: boolean;
+  colorDarkLighter?: boolean;
+  colorDarkLight?: boolean;
+  colorDark?: boolean;
+  colorThemeSofter?: boolean;
+  colorThemeSoft?: boolean;
+  colorTheme?: boolean;
+  colorThemeHard?: boolean;
+  colorThemeHarder?: boolean;
+
   justifyContentCenter?: boolean;
+  justifyContentFlexStart?: boolean;
+  justifyContentFlexEnd?: boolean;
+  justifyContentSpaceBetween?: boolean;
+  justifyContentSpaceAround?: boolean;
+  justifyContentSpaceEvenly?: boolean;
+
+  alignItemsFlexStart?: boolean;
+  alignItemsFlexEnd?: boolean;
   alignItemsCenter?: boolean;
-  flex?: boolean;
+  alignItemsStretch?: boolean;
+  alignItemsBaseline?: boolean;
+
+  alignSelfFlexStart?: boolean;
+  alignSelfFlexEnd?: boolean;
+  alignSelfCenter?: boolean;
+  alignSelfStretch?: boolean;
+  alignSelfBaseline?: boolean;
+
+  flex?: boolean | number;
   flexDirectionRow?: boolean;
   flexDirectionColumn?: boolean;
   flexDirectionRowReverse?: boolean;
@@ -63,6 +93,9 @@ export interface WithLayoutProps {
   absoluteBottomRightLarge?: boolean;
   absoluteBottomRightExtraLarge?: boolean;
 
+  invertX?: boolean;
+  invertY?: boolean;
+
   children?: ReactNode;
 }
 
@@ -73,25 +106,59 @@ export function withLayoutProps<Props extends { style?: any }>(
   return forwardRef<typeof Component, NewProps>(
     (
       {
+        colorLight,
+        colorLightDark,
+        colorLightDarker,
+        colorDarkLighter,
+        colorDarkLight,
+        colorDark,
+        colorThemeSofter,
+        colorThemeSoft,
+        colorTheme,
+        colorThemeHard,
+        colorThemeHarder,
+
         paddingSmall,
         paddingMedium,
         paddingLarge,
         paddingExtraLarge,
+
         paddingHorizontalSmall,
         paddingHorizontalMedium,
         paddingHorizontalLarge,
         paddingHorizontalExtraLarge,
+
         paddingVerticalSmall,
         paddingVerticalMedium,
         paddingVerticalLarge,
         paddingVerticalExtraLarge,
+
         centerContent,
+
         justifyContentCenter,
+        justifyContentFlexStart,
+        justifyContentFlexEnd,
+        justifyContentSpaceBetween,
+        justifyContentSpaceAround,
+        justifyContentSpaceEvenly,
+
+        alignItemsFlexStart,
+        alignItemsFlexEnd,
         alignItemsCenter,
+        alignItemsStretch,
+        alignItemsBaseline,
+
+        alignSelfFlexStart,
+        alignSelfFlexEnd,
+        alignSelfCenter,
+        alignSelfStretch,
+        alignSelfBaseline,
+
         flexDirectionRow,
         flexDirectionColumn,
         flexDirectionRowReverse,
         flexDirectionColumnReverse,
+
         absoluteTopLeft,
         absoluteTopLeftSmall,
         absoluteTopLeftMedium,
@@ -112,14 +179,38 @@ export function withLayoutProps<Props extends { style?: any }>(
         absoluteBottomRightMedium,
         absoluteBottomRightLarge,
         absoluteBottomRightExtraLarge,
+
         flex,
         aspectRatioOne,
+        invertX,
+        invertY,
         style: passThroughStyle,
         ...passThroughProps
       },
       ref
     ) => {
       const style: ViewStyle = {};
+
+      if (colorLight) style.backgroundColor = constants.colorBackgroundLight;
+      if (colorLightDark)
+        style.backgroundColor = constants.colorBackgroundLightDark;
+      if (colorLightDarker)
+        style.backgroundColor = constants.colorBackgroundLightDarker;
+      if (colorDarkLighter)
+        style.backgroundColor = constants.colorBackgroundDarkLighter;
+      if (colorDarkLight)
+        style.backgroundColor = constants.colorBackgroundDarkLight;
+      if (colorDark) style.backgroundColor = constants.colorBackgroundDark;
+      if (colorThemeSofter)
+        style.backgroundColor = constants.colorBackgroundThemeSofter;
+      if (colorThemeSoft)
+        style.backgroundColor = constants.colorBackgroundThemeSoft;
+      if (colorTheme) style.backgroundColor = constants.colorBackgroundTheme;
+      if (colorThemeHard)
+        style.backgroundColor = constants.colorBackgroundThemeHard;
+      if (colorThemeHarder)
+        style.backgroundColor = constants.colorBackgroundThemeHarder;
+
       if (paddingSmall) style.padding = C.spacingSmall;
       if (paddingMedium) style.padding = C.spacingMedium;
       if (paddingLarge) style.padding = C.spacingLarge;
@@ -142,7 +233,23 @@ export function withLayoutProps<Props extends { style?: any }>(
         style.alignItems = "center";
       }
       if (justifyContentCenter) style.justifyContent = "center";
+      if (justifyContentFlexStart) style.justifyContent = "flex-start";
+      if (justifyContentFlexEnd) style.justifyContent = "flex-end";
+      if (justifyContentSpaceBetween) style.justifyContent = "space-between";
+      if (justifyContentSpaceAround) style.justifyContent = "space-around";
+      if (justifyContentSpaceEvenly) style.justifyContent = "space-evenly";
+
+      if (alignItemsFlexStart) style.alignItems = "flex-start";
+      if (alignItemsFlexEnd) style.alignItems = "flex-end";
       if (alignItemsCenter) style.alignItems = "center";
+      if (alignItemsStretch) style.alignItems = "stretch";
+      if (alignItemsBaseline) style.alignItems = "baseline";
+
+      if (alignSelfFlexStart) style.alignSelf = "flex-start";
+      if (alignSelfFlexEnd) style.alignSelf = "flex-end";
+      if (alignSelfCenter) style.alignSelf = "center";
+      if (alignSelfStretch) style.alignSelf = "stretch";
+      if (alignSelfBaseline) style.alignSelf = "baseline";
 
       if (flexDirectionRow) style.flexDirection = "row";
       if (flexDirectionColumn) style.flexDirection = "column";
@@ -250,11 +357,15 @@ export function withLayoutProps<Props extends { style?: any }>(
         style.right = C.spacingExtraLarge;
       }
 
-      if (flex) style.flex = 1;
+      if (typeof flex === "number") style.flex = flex;
+      if (flex === true) style.flex = 1;
 
       if (aspectRatioOne) {
         style.aspectRatio = 1;
       }
+
+      if (invertX) style.transform = [{ scaleX: -1 }];
+      if (invertY) style.transform = [{ scaleY: -1 }];
 
       return (
         <Component
