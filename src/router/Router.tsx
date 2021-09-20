@@ -6,7 +6,7 @@ import React from "react";
 import { Header } from "~/components/Header";
 import { useStore } from "~/mobx/utils/useStore";
 import { CreateSoundboardScreen } from "~/screens/CreateSoundboardScreen/CreateSoundboardScreen";
-import { SoundboardListScreen } from "~/screens/SoundboardListScreen";
+import { SoundboardListScreen } from "~/screens/SoundboardListScreen/SoundboardListScreen";
 import { TabGroupParams, TopLevelStackParams } from "./RouterTypes";
 
 const Tabs = createBottomTabNavigator<TabGroupParams>();

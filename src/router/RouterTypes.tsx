@@ -9,12 +9,12 @@ import {
 // --------------------------------------------
 // Start navigator params definitions
 
-declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace
-  namespace ReactNavigation {
-    interface RootParamList extends TopLevelStackParams {}
-  }
-}
+// declare global {
+//   // eslint-disable-next-line @typescript-eslint/no-namespace
+//   namespace ReactNavigation {
+//     interface RootParamList extends TopLevelStackParams {}
+//   }
+// }
 
 // Stack  >  Tabs
 export type TabGroupParams = {
