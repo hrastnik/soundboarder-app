@@ -5,6 +5,7 @@ import utc from "dayjs/plugin/utc";
 import { configure } from "mobx";
 import ReactNativeBlobUtil from "react-native-blob-util";
 import { createStore } from "~/mobx/createStore";
+import { createPersistence } from "./services/createPersistence";
 import { createQueryClient } from "./services/createQueryClient";
 
 export async function initialize() {
@@ -12,9 +13,12 @@ export async function initialize() {
   dayjs.extend(utc);
   dayjs.extend(relativeTime);
   dayjs.extend(localizedFormat);
+
   const fs = ReactNativeBlobUtil.fs;
 
-  const store = await createStore({ fs });
+  const persistence = createPersistence();
+
+  const store = await createStore({ fs, persistence });
 
   const queryClient = createQueryClient();
   return { store, queryClient };

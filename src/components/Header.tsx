@@ -2,7 +2,7 @@ import { StackHeaderProps } from "@react-navigation/stack";
 import { observer } from "mobx-react";
 import React from "react";
 import { StyleSheet } from "react-native";
-import { useSafeArea, useSafeAreaInsets } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useStore } from "~/mobx/utils/useStore";
 import { constants as C } from "~/style/constants";
 import { shadow } from "~/utils/shadow";

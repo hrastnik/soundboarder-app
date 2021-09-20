@@ -24,7 +24,7 @@ export const SoundboardListItem = observer(function SoundboardListItem({
 
         <Spacer />
 
-        <PlayBackProgressBar disabled={!soundboard.isPlaying} />
+        <PlayBackProgressBar progress={soundboard.progress} />
       </View>
     </TouchableOpacity>
   );

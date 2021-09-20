@@ -21,6 +21,6 @@ try {
     ".env file missing or invalid. Do you have a `.env` file in the root of" +
       "your project? You can copy a config from .env.example and save into .env" +
       ", then restart the packager with `yarn start --resetCache\n\nError: " +
-      error.message
+      (error instanceof Error ? error.message : error)
   );
 }

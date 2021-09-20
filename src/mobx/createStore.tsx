@@ -1,8 +1,9 @@
 import type { ReactNativeBlobUtil } from "react-native-blob-util";
+import { PersistenceStatic } from "~/services/createPersistence";
 import { RootStore } from "./RootStore";
 
 export interface Environment {
-  // persistence: PersistenceStatic;
+  persistence: PersistenceStatic;
   // http: HttpStatic;
   fs: ReactNativeBlobUtil["fs"];
 }

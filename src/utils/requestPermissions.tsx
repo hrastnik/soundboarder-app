@@ -57,7 +57,10 @@ const requestPermissions = async (
 
     return { permissionsGranted: true, error: undefined };
   } catch (error) {
-    return { permissionsGranted: false, error: error.message };
+    return {
+      permissionsGranted: false,
+      error: error instanceof Error ? error.message : error,
+    };
   }
 };
 
