@@ -1,27 +1,15 @@
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { observer } from "mobx-react";
 import React from "react";
 import { Header } from "~/components/Header";
 import { useStore } from "~/mobx/utils/useStore";
-import { CreateSoundboardScreen } from "~/screens/CreateSoundboardScreen/CreateSoundboardScreen";
+import { CreateRecordingScreen } from "~/screens/CreateRecordingScreen/CreateRecordingScreen";
+import { RecordingListScreen } from "~/screens/RecordingListScreen/RecordingListScreen";
 import { SoundboardListScreen } from "~/screens/SoundboardListScreen/SoundboardListScreen";
-import { TabGroupParams, TopLevelStackParams } from "./RouterTypes";
+import { TopLevelStackParams } from "./RouterTypes";
 
-const Tabs = createBottomTabNavigator<TabGroupParams>();
 const Stack = createStackNavigator<TopLevelStackParams>();
-
-function renderTabs() {
-  return (
-    <Tabs.Navigator>
-      <Tabs.Screen
-        name="SoundboardListScreen"
-        component={SoundboardListScreen}
-      />
-    </Tabs.Navigator>
-  );
-}
 
 export const Router = observer(function Router() {
   const store = useStore();
@@ -29,7 +17,7 @@ export const Router = observer(function Router() {
   return (
     <NavigationContainer ref={store.navigationStore.setNavigation}>
       <Stack.Navigator
-        // initialRouteName="CreateSoundboardScreen"
+        // initialRouteName="CreateRecordingScreen"
         screenOptions={{
           headerMode: "screen",
           header(props) {
@@ -37,12 +25,22 @@ export const Router = observer(function Router() {
           },
         }}
       >
-        <Stack.Screen name="TabGroup">{renderTabs}</Stack.Screen>
+        <Stack.Screen
+          name="SoundboardListScreen"
+          component={SoundboardListScreen}
+          options={{ title: "Soundboards" }}
+        />
 
         <Stack.Screen
-          name="CreateSoundboardScreen"
-          component={CreateSoundboardScreen}
-          options={{ title: "CreateSoundboardScreen" }}
+          name="CreateRecordingScreen"
+          component={CreateRecordingScreen}
+          options={{ title: "Sound creator" }}
+        />
+
+        <Stack.Screen
+          name="RecordingListScreen"
+          component={RecordingListScreen}
+          options={{ title: "Recordings" }}
         />
       </Stack.Navigator>
     </NavigationContainer>

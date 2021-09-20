@@ -1,1 +1,3 @@
-export type QueryKey = ["recordingList"];
+export type QueryKey =
+  | ["recordingList", { soundboard: string }]
+  | ["soundboardList"];

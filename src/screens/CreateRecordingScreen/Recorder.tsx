@@ -1,9 +1,11 @@
 import { useNavigation } from "@react-navigation/core";
+import { useRoute } from "@react-navigation/native";
 import { Audio } from "expo-av";
 import { runInAction } from "mobx";
 import { observer, useLocalObservable } from "mobx-react";
 import React, { useState } from "react";
 import { Alert, ToastAndroid } from "react-native";
+import { useQueryClient } from "react-query";
 import { Button } from "~/components/Button";
 import { Spacer } from "~/components/Spacer";
 import { Text } from "~/components/Text";
@@ -13,6 +15,7 @@ import {
 } from "~/components/TouchableOpacity";
 import { View } from "~/components/View";
 import { useStore } from "~/mobx/utils/useStore";
+import { RouteProp } from "~/router/RouterTypes";
 import { PlayBackProgressBar } from "./PlayBackProgressBar";
 import { SaveRecordingInput } from "./SaveRecordingInput";
 
@@ -34,7 +37,10 @@ function RecordButton(props: TouchableOpacityProps) {
 
 export const Recorder = observer(function Recorder() {
   const navigation = useNavigation();
+  const route = useRoute<RouteProp<"CreateRecordingScreen">>();
+  const soundboard = route.params.soundboard;
   const store = useStore();
+  const queryClient = useQueryClient();
   const state = useLocalObservable(() => {
     return {
       durationMillis: 0,
@@ -43,7 +49,7 @@ export const Recorder = observer(function Recorder() {
         | "recording"
         | "recording error"
         | "recording successful",
-      recordingName: "",
+      recordingUri: "",
     };
   });
 
@@ -53,7 +59,9 @@ export const Recorder = observer(function Recorder() {
 
   async function startRecording() {
     try {
-      await Audio.requestPermissionsAsync();
+      const { granted } = await Audio.requestPermissionsAsync();
+
+      if (!granted) return;
 
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: true,
@@ -77,7 +85,7 @@ export const Recorder = observer(function Recorder() {
       const uri = recording.getURI() ?? "unknown";
 
       runInAction(() => {
-        state.recordingName = uri;
+        state.recordingUri = uri;
         state.currentPhase = "recording";
       });
     } catch (error) {
@@ -161,7 +169,7 @@ export const Recorder = observer(function Recorder() {
           <View paddingHorizontalMedium>
             <SaveRecordingInput
               onSavePress={async (titleInput) => {
-                const extension = state.recordingName.split(".").pop();
+                const extension = state.recordingUri.split(".").pop();
 
                 const basename = titleInput
                   ? titleInput
@@ -170,8 +178,11 @@ export const Recorder = observer(function Recorder() {
 
                 store.recordingStore.saveRecording({
                   title,
-                  path: state.recordingName,
+                  path: state.recordingUri,
+                  soundboard,
                 });
+
+                queryClient.invalidateQueries(["recordingList"]);
 
                 navigation.goBack();
                 ToastAndroid.show(`Saved ${title}`, ToastAndroid.SHORT);

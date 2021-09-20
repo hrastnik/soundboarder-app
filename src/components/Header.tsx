@@ -1,3 +1,4 @@
+import { BottomTabHeaderProps } from "@react-navigation/bottom-tabs/lib/typescript/src/types";
 import { StackHeaderProps } from "@react-navigation/stack";
 import { observer } from "mobx-react";
 import React from "react";
@@ -33,65 +34,67 @@ const S = StyleSheet.create({
   titleText: { flex: 1 },
 });
 
-interface HeaderProps extends StackHeaderProps {}
+type HeaderProps = StackHeaderProps | BottomTabHeaderProps;
 
-export const Header = observer(({ options, navigation, back }: HeaderProps) => {
-  const canGoBack = !!back;
-  const insets = useSafeAreaInsets();
-  const insetTop = insets.top;
+export const Header = observer(
+  ({ options, navigation, ...otherProps }: HeaderProps) => {
+    const canGoBack = "back" in otherProps && !!otherProps.back;
+    const insets = useSafeAreaInsets();
+    const insetTop = insets.top;
 
-  const HeaderRight = options?.headerRight?.({});
-  const HeaderLeft = options?.headerLeft?.({});
-  const hasLeftComponent = canGoBack || Boolean(HeaderLeft);
+    const HeaderRight = options?.headerRight?.({});
+    const HeaderLeft = options?.headerLeft?.({});
+    const hasLeftComponent = canGoBack || Boolean(HeaderLeft);
 
-  const { title } = options;
+    const { title } = options;
 
-  const store = useStore();
-  const statusBarBackground = (
-    <View
-      style={{
-        height: insetTop,
-        backgroundColor: store.uiStore.safeAreaBackgroundColor,
-      }}
-    />
-  );
+    const store = useStore();
+    const statusBarBackground = (
+      <View
+        style={{
+          height: insetTop,
+          backgroundColor: store.uiStore.safeAreaBackgroundColor,
+        }}
+      />
+    );
 
-  const { t } = store.i18n;
+    const { t } = store.i18n;
 
-  return (
-    <View style={S.container}>
-      {statusBarBackground}
-      <View flexDirectionRow alignItemsCenter style={S.headerContainer}>
-        <View alignItemsCenter flexDirectionRow flex>
-          {canGoBack && (
-            <IconButton
-              style={S.backButton}
-              onPress={() => {
-                navigation.goBack();
-              }}
-              iconName="chevron-small-left"
-              iconSize={28}
-              iconColor={C.colorTextLight}
-            />
-          )}
-          {HeaderLeft}
-          {!hasLeftComponent && <Spacer large />}
-          <Text
-            colorLight
-            sizeExtraLarge
-            weightBold
-            style={S.titleText}
-            ellipsizeMode="tail"
-            numberOfLines={1}
-          >
-            {t(title as any)}
-          </Text>
-        </View>
+    return (
+      <View style={S.container}>
+        {statusBarBackground}
+        <View flexDirectionRow alignItemsCenter style={S.headerContainer}>
+          <View alignItemsCenter flexDirectionRow flex>
+            {canGoBack && (
+              <IconButton
+                style={S.backButton}
+                onPress={() => {
+                  navigation.goBack();
+                }}
+                iconName="chevron-small-left"
+                iconSize={28}
+                iconColor={C.colorTextLight}
+              />
+            )}
+            {HeaderLeft}
+            {!hasLeftComponent && <Spacer large />}
+            <Text
+              colorLight
+              sizeExtraLarge
+              weightBold
+              style={S.titleText}
+              ellipsizeMode="tail"
+              numberOfLines={1}
+            >
+              {t(title as any)}
+            </Text>
+          </View>
 
-        <View justifyContentCenter flexDirectionRow>
-          {HeaderRight}
+          <View justifyContentCenter flexDirectionRow>
+            {HeaderRight}
+          </View>
         </View>
       </View>
-    </View>
-  );
-});
+    );
+  }
+);

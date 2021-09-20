@@ -6,7 +6,6 @@ import {
   SnapshotOut,
   types,
 } from "mobx-state-tree";
-import { Await } from "~/mobx/utils/Await";
 
 export interface RecordingInstance extends Instance<typeof Recording> {}
 export interface RecordingSnapshotIn extends SnapshotIn<typeof Recording> {}
@@ -32,7 +31,7 @@ export const Recording = types
   })
   .volatile(() => {
     return {
-      _audio: undefined as
+      audio: undefined as
         | undefined
         | {
             sound: Audio.Sound;
@@ -53,26 +52,22 @@ export const Recording = types
   })
   .actions((self) => {
     return {
-      _setAudio(audio: Await<typeof Audio.Sound.createAsync>) {
-        self._audio = audio;
+      getAudio: flow(function* getAudio(): any {
+        if (self.audio) return self.audio;
 
-        return self._audio;
-      },
-    };
-  })
-  .views((self) => {
-    return {
-      async audio() {
-        if (self._audio) return self._audio;
-
-        const audio = await Audio.Sound.createAsync(
+        const audio: {
+          sound: Audio.Sound;
+          status: AVPlaybackStatus;
+        } = yield Audio.Sound.createAsync(
           { uri: self.uri },
           undefined,
           self.onPlaybackStatusUpdate
         );
 
-        return self._setAudio(audio);
-      },
+        self.audio = audio;
+
+        return;
+      }),
     };
   })
   .views((self) => {
@@ -117,8 +112,11 @@ export const Recording = types
   .actions((self) => {
     return {
       play: flow(function* play(): any {
-        const audio: Await<typeof self.audio> = yield self.audio();
-        yield audio.sound.replayAsync();
+        yield self.getAudio();
+
+        if (!self.audio) throw new Error("Audio not ready");
+
+        yield self.audio.sound.replayAsync();
       }),
     };
   });
