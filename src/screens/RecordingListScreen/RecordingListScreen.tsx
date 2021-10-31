@@ -4,7 +4,7 @@ import {
   useRoute,
 } from "@react-navigation/native";
 import { observer } from "mobx-react";
-import React, { useEffect } from "react";
+import React from "react";
 import { FlatList } from "react-native";
 import { Button } from "~/components/Button";
 import { Screen } from "~/components/Screen";
@@ -15,6 +15,7 @@ import { View } from "~/components/View";
 import { useQuery } from "~/hooks/useQuery";
 import { useStore } from "~/mobx/utils/useStore";
 import { RouteProp } from "~/router/RouterTypes";
+import { constants } from "~/style/constants";
 import { RecordingListItem } from "./RecordingListItem";
 
 function useRecordingList({
@@ -45,25 +46,7 @@ export const RecordingListScreen = observer(function RecordingListScreen() {
     soundboard,
   });
 
-  const soundboardList = query.data;
-  const isEmpty = soundboardList ? soundboardList.length === 0 : true;
-  useEffect(() => {
-    navigation.setOptions({
-      headerRight() {
-        if (!query.isSuccess || isEmpty) return null;
-        return (
-          <Button
-            transparent
-            style={{ width: 52 }}
-            title="Add"
-            onPress={() => {
-              navigation.navigate("CreateRecordingScreen", { soundboard });
-            }}
-          />
-        );
-      },
-    });
-  }, [navigation, isEmpty, query.isSuccess, soundboard]);
+  const recordingList = query.data;
 
   if (query.isError) {
     return (
@@ -87,37 +70,45 @@ export const RecordingListScreen = observer(function RecordingListScreen() {
 
   return (
     <Screen preventScroll>
-      {isEmpty ? (
-        <Button
-          title="Create your first soundboard"
-          onPress={() => {
-            navigation.navigate("CreateRecordingScreen", { soundboard });
-          }}
-        />
-      ) : (
-        <>
-          <FlatList
-            keyExtractor={(soundboard) => soundboard.uri}
-            data={soundboardList}
-            renderItem={({ item: soundboard }) => {
-              return <RecordingListItem recording={soundboard} />;
-            }}
-            onRefresh={query.onRefresh}
-            refreshing={query.isRefreshing}
-          />
+      <FlatList
+        keyExtractor={(recording) => recording.basename}
+        ListHeaderComponent={
+          <View paddingExtraLarge centerContent>
+            <Text alignCenter sizeExtraLarge>
+              {soundboard}
+            </Text>
+          </View>
+        }
+        data={recordingList}
+        contentContainerStyle={{
+          padding: constants.spacingMedium,
+        }}
+        renderItem={({ item: recording }) => {
+          return <RecordingListItem recording={recording} />;
+        }}
+        ItemSeparatorComponent={() => <Spacer large />}
+        onRefresh={query.onRefresh}
+        refreshing={query.isRefreshing}
+        ListEmptyComponent={
+          <View paddingExtraLarge>
+            <Text alignCenter>
+              No recordings yet. You should add one using the button bellow
+            </Text>
+          </View>
+        }
+        ListFooterComponent={
+          <>
+            <Spacer extraLarge />
 
-          <Spacer extraLarge />
-
-          <View>
             <Button
-              title="Add another"
+              title="+ ADD RECORDING"
               onPress={() => {
                 navigation.navigate("CreateRecordingScreen", { soundboard });
               }}
             />
-          </View>
-        </>
-      )}
+          </>
+        }
+      />
     </Screen>
   );
 });

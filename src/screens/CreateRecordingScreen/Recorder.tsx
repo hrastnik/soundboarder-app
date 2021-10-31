@@ -1,5 +1,6 @@
 import { useNavigation } from "@react-navigation/core";
 import { useRoute } from "@react-navigation/native";
+import dayjs from "dayjs";
 import { Audio } from "expo-av";
 import { runInAction } from "mobx";
 import { observer, useLocalObservable } from "mobx-react";
@@ -7,33 +8,15 @@ import React, { useState } from "react";
 import { Alert, ToastAndroid } from "react-native";
 import { useQueryClient } from "react-query";
 import { Button } from "~/components/Button";
+import { Icon } from "~/components/Icon";
+import { IconButton } from "~/components/IconButton";
 import { Spacer } from "~/components/Spacer";
 import { Text } from "~/components/Text";
-import {
-  TouchableOpacity,
-  TouchableOpacityProps,
-} from "~/components/TouchableOpacity";
 import { View } from "~/components/View";
 import { useStore } from "~/mobx/utils/useStore";
 import { RouteProp } from "~/router/RouterTypes";
-import { PlayBackProgressBar } from "./PlayBackProgressBar";
+import { constants } from "~/style/constants";
 import { SaveRecordingInput } from "./SaveRecordingInput";
-
-function RecordButton(props: TouchableOpacityProps) {
-  return (
-    <TouchableOpacity
-      style={{
-        width: 100,
-        height: 100,
-        borderRadius: 50,
-        backgroundColor: "#bb0000",
-        borderWidth: 2,
-        borderColor: "#000000",
-      }}
-      {...props}
-    />
-  );
-}
 
 export const Recorder = observer(function Recorder() {
   const navigation = useNavigation();
@@ -50,6 +33,7 @@ export const Recorder = observer(function Recorder() {
         | "recording error"
         | "recording successful",
       recordingUri: "",
+      error: undefined as undefined | string,
     };
   });
 
@@ -71,8 +55,6 @@ export const Recorder = observer(function Recorder() {
       const { recording } = await Audio.Recording.createAsync(
         Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY,
         function onUpdate(updateState) {
-          console.warn("Duration millis", updateState.durationMillis);
-
           state.durationMillis = updateState.durationMillis;
         },
         100
@@ -87,6 +69,7 @@ export const Recorder = observer(function Recorder() {
       runInAction(() => {
         state.recordingUri = uri;
         state.currentPhase = "recording";
+        state.error = undefined;
       });
     } catch (error) {
       Alert.alert("Error");
@@ -97,74 +80,103 @@ export const Recorder = observer(function Recorder() {
 
   async function stopRecording() {
     try {
-      const result = await recording?.stopAndUnloadAsync();
-      console.warn("result", result);
-      state.currentPhase = "recording successful";
+      await recording?.stopAndUnloadAsync();
+      runInAction(() => {
+        state.currentPhase = "recording successful";
+        state.error = undefined;
+      });
     } catch (error) {
       Alert.alert("Error");
       console.error(error);
-      state.currentPhase = "recording error";
+      runInAction(() => {
+        state.currentPhase = "recording error";
+        state.error = String(error);
+      });
     }
   }
 
+  const elapsedTime = dayjs()
+    .startOf("year")
+    .add(state.durationMillis, "ms")
+    .format("HH:ss");
+
   return (
-    <View>
-      <Text>Record a sound?</Text>
-      <Text>Phase: {state.currentPhase}</Text>
-      {/* <Text>Playback {JSON.stringify(state.playBackState, null, 2)}</Text> */}
+    <View flex>
+      <View paddingExtraLarge centerContent>
+        <Text alignCenter sizeExtraLarge>
+          Record a sound
+        </Text>
+      </View>
+
+      {state.currentPhase === "before recording" && (
+        <>
+          <Spacer extraLarge />
+          <Spacer extraLarge />
+          <Spacer extraLarge />
+
+          <Text alignCenter weightBold style={{ fontSize: 64, lineHeight: 64 }}>
+            {elapsedTime}
+          </Text>
+
+          <View flex />
+
+          <Button
+            title="Start"
+            onPress={() => startRecording()}
+            flexDirectionRowReverse
+          >
+            <Icon name="record" size={18} color="#cc0000" />
+          </Button>
+
+          <Spacer extraLarge />
+        </>
+      )}
       {/* <Text>Record a sound? {state.currentPhase}</Text> */}
 
-      {state.currentPhase === "before recording" ||
-      state.currentPhase === "recording" ? (
-        <View centerContent paddingMedium>
-          <RecordButton
-            onPress={async () => {
-              if (state.currentPhase === "before recording") {
-                startRecording();
-              } else if (state.currentPhase === "recording") {
-                stopRecording();
-              }
-            }}
-          />
-        </View>
-      ) : (
-        <Button
-          alignSelfCenter
-          title="Reset"
-          onPress={() => {
-            state.currentPhase = "before recording";
-          }}
-        />
-      )}
-
-      <Spacer />
-
       {state.currentPhase === "recording" && (
-        <Text alignCenter>
-          {String(state.durationMillis ?? 0)}
-          {/* {audioRecorderPlayer.mmssss(
-            store.recordingStore.recordingState?.currentPosition ?? 0
-          )} */}
-        </Text>
+        <>
+          <Spacer extraLarge />
+          <Spacer extraLarge />
+          <Spacer extraLarge />
+
+          <Text alignCenter weightBold style={{ fontSize: 64, lineHeight: 64 }}>
+            {elapsedTime}
+          </Text>
+
+          <View flex />
+
+          <Button
+            title="Start"
+            onPress={() => stopRecording()}
+            flexDirectionRowReverse
+          >
+            <Icon name="stop" size={18} color={constants.colorTextDark} />
+          </Button>
+
+          <Spacer extraLarge />
+        </>
       )}
 
       {state.currentPhase === "recording successful" && (
         <>
-          <Button
-            alignSelfCenter
-            title="Play"
-            onPress={() => {
-              console.warn("TODO");
+          <Spacer extraLarge />
+          <Spacer extraLarge />
+          <Spacer extraLarge />
 
-              // recording..startPlayer(state.recordingName);
-            }}
-          />
+          <View centerContent>
+            <IconButton
+              alignSelfCenter
+              iconName="play-pause"
+              iconColor={constants.colorTextDark}
+              iconSize={32}
+              onPress={() => {
+                console.warn("TODO");
+              }}
+            />
+          </View>
 
-          <Spacer />
-
-          <PlayBackProgressBar progress={0.5} />
-
-          <Spacer />
+          <Spacer extraLarge />
+          <Spacer extraLarge />
 
           <View paddingHorizontalMedium>
             <SaveRecordingInput
@@ -173,7 +185,7 @@ export const Recorder = observer(function Recorder() {
 
                 const basename = titleInput
                   ? titleInput
-                  : `recording-${Date.now()}`;
+                  : `recording-${dayjs().format("YYYY-MM-DD-HH-mm-ss")}`;
                 const title = `${basename}.${extension}`;
 
                 store.recordingStore.saveRecording({
@@ -190,8 +202,32 @@ export const Recorder = observer(function Recorder() {
                 // console.log(fileName);
               }}
             />
+
+            <Spacer extraLarge />
+            <Spacer extraLarge />
+
+            <Button
+              style={{ borderColor: "transparent" }}
+              outline
+              title="Start over"
+              onPress={() => {
+                state.currentPhase = "before recording";
+              }}
+            />
           </View>
         </>
+      )}
+
+      {state.currentPhase === "recording error" && (
+        <View paddingExtraLarge>
+          <Text alignCenter>Error!</Text>
+
+          <Spacer large />
+
+          <Text alignCenter>Something bad happened while recording :(</Text>
+          <Spacer large />
+          <Text sizeSmall>{state.error}</Text>
+        </View>
       )}
 
       <Spacer />

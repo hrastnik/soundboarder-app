@@ -16,8 +16,7 @@ const S = StyleSheet.create({
     minHeight: 49,
     backgroundColor: C.colorBackgroundLightDark,
     borderRadius: 4,
-    borderColor: C.colorTextTheme,
-    borderWidth: StyleSheet.hairlineWidth,
+    borderWidth: 2,
   },
   spacer: { height: 2 },
 });
@@ -125,7 +124,7 @@ export const TextInput = memo(
       // fontFamily = "OpenSans-ExtraBold";
     }
 
-    const borderColor = isError ? C.colorTextDanger : C.colorTextTheme;
+    const borderColor = isError ? C.colorTextDanger : "#440A68";
     return (
       <View>
         {!withoutLabel && (
@@ -136,7 +135,8 @@ export const TextInput = memo(
         )}
         <RNTextInput
           ref={ref}
-          selectionColor={C.colorBackgroundThemeSofter}
+          selectionColor={C.colorTextDarkSoft}
+          placeholderTextColor={C.colorTextDarkSofter}
           style={[
             S.baseStyle,
             {

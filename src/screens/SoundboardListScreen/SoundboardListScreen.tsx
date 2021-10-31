@@ -1,18 +1,15 @@
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { observer } from "mobx-react";
-import React, { PropsWithoutRef, useEffect, useState } from "react";
+import React from "react";
 import { FlatList } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useQueryClient } from "react-query";
-import { Button, ButtonProps } from "~/components/Button";
+import { Button } from "~/components/Button";
 import { Screen } from "~/components/Screen";
 import { Spacer } from "~/components/Spacer";
 import { Spinner } from "~/components/Spinner";
 import { Text } from "~/components/Text";
-import { TextInput } from "~/components/TextInput";
 import { View } from "~/components/View";
 import { useQuery } from "~/hooks/useQuery";
-import { getEnv } from "~/mobx/utils/getEnv";
 import { useStore } from "~/mobx/utils/useStore";
 import { constants } from "~/style/constants";
 
@@ -27,34 +24,13 @@ function useSoundboardList({ enabled }: { enabled: boolean }) {
   return query;
 }
 
-const HeaderAddButton = (props: PropsWithoutRef<ButtonProps>) => {
-  return <Button transparent style={{ width: 52 }} title="Add" {...props} />;
-};
-
 export const SoundboardListScreen = observer(function SoundboardListScreen() {
   const insets = useSafeAreaInsets();
-  const store = useStore();
-  const queryClient = useQueryClient();
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const query = useSoundboardList({ enabled: isFocused });
 
   const soundboardList = query.data;
-  const isEmpty = soundboardList ? soundboardList.length === 0 : true;
-  useEffect(() => {
-    navigation.setOptions({
-      headerRight() {
-        if (!query.isSuccess || isEmpty) return null;
-        return (
-          <HeaderAddButton
-            onPress={() => {
-              // navigation.navigate("CreateRecordingScreen");
-            }}
-          />
-        );
-      },
-    });
-  }, [navigation, isEmpty, query.isSuccess]);
 
   if (query.isError) {
     return (
@@ -101,6 +77,7 @@ export const SoundboardListScreen = observer(function SoundboardListScreen() {
             return (
               <Button
                 title={soundboard}
+                outline
                 onPress={() => {
                   navigation.navigate("RecordingListScreen", {
                     soundboard: soundboard,
@@ -109,58 +86,30 @@ export const SoundboardListScreen = observer(function SoundboardListScreen() {
               />
             );
           }}
+          ItemSeparatorComponent={() => <Spacer large />}
           onRefresh={query.onRefresh}
           refreshing={query.isRefreshing}
           ListEmptyComponent={
+            <View paddingExtraLarge>
+              <Text alignCenter>
+                No soundboards yet. You should add one using the button bellow
+              </Text>
+            </View>
+          }
+          ListFooterComponent={
             <>
+              <Spacer large />
+
               <Button
-                // outline
-                title="Create your first soundboard"
+                title="+ ADD SOUNDBOARD"
                 onPress={() => {
-                  // navigation.navigate("");
+                  navigation.navigate("CreateSoundboardScreen");
                 }}
               />
             </>
           }
         />
       </View>
-
-      <Spacer extraLarge />
-      <View paddingMedium>
-        <CreateRecordingView
-          onPress={async (name) => {
-            if (!name) return;
-            const env = getEnv(store);
-            await env.fs.mkdir(`${env.fs.dirs.DocumentDir}/${name}`);
-            queryClient.invalidateQueries(["soundboardList"]);
-          }}
-        />
-      </View>
     </Screen>
   );
 });
-
-const CreateRecordingView = ({ onPress }: { onPress(name: string): any }) => {
-  const [name, setName] = useState("");
-  return (
-    <View>
-      <TextInput
-        label="Create"
-        withoutCaption
-        // withoutLabel
-        value={name}
-        onChangeText={setName}
-      />
-
-      <Spacer large />
-
-      <Button
-        title="Create new soundboard +"
-        onPress={async () => {
-          await onPress(name);
-          setName("");
-        }}
-      />
-    </View>
-  );
-};

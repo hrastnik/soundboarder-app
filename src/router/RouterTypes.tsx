@@ -16,6 +16,7 @@ export type TopLevelStackParams = {
   SoundboardListScreen: undefined;
   CreateRecordingScreen: { soundboard: string };
   RecordingListScreen: { soundboard: string };
+  CreateSoundboardScreen: undefined;
 };
 
 // End navigator params definitions

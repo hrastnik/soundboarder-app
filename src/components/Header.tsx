@@ -71,7 +71,7 @@ export const Header = observer(
                 onPress={() => {
                   navigation.goBack();
                 }}
-                iconName="chevron-small-left"
+                iconName="chevron-left"
                 iconSize={28}
                 iconColor={C.colorTextLight}
               />

@@ -3,6 +3,7 @@ import { Button } from "~/components/Button";
 import { Icon } from "~/components/Icon";
 import { IconProps } from "~/components/Icon";
 import { ButtonProps } from "~/components/Button";
+import { TouchableOpacity } from "./TouchableOpacity";
 
 export interface IconButtonProps extends ButtonProps {
   iconName: IconProps["name"];
@@ -21,20 +22,14 @@ const HIT_SLOP: ButtonProps["hitSlop"] = {
 export const IconButton = forwardRef<Button, IconButtonProps>(
   ({ iconName, iconSize, iconColor, iconStyle, ...props }, ref: any) => {
     return (
-      <Button
-        ref={ref}
-        hitSlop={HIT_SLOP}
-        blockUi={false}
-        transparent
-        {...props}
-      >
+      <TouchableOpacity ref={ref} hitSlop={HIT_SLOP} blockUi={false} {...props}>
         <Icon
           name={iconName}
           size={iconSize}
           color={iconColor}
           style={iconStyle}
         />
-      </Button>
+      </TouchableOpacity>
     );
   }
 );

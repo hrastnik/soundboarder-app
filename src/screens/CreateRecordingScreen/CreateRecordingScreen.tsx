@@ -14,7 +14,7 @@ export const CreateRecordingScreen = observer(function CreateRecordingScreen() {
   >(Platform.select({ android: undefined, ios: true }));
 
   return (
-    <Screen>
+    <Screen preventScroll>
       {arePermissionAccepted ? (
         <Recorder />
       ) : (

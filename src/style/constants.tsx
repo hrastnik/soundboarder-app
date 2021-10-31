@@ -67,7 +67,7 @@ export const constants = {
   spacingExtraLarge: 32,
 
   fontSizeExtraSmall: 8,
-  fontSizeSmall: 10,
+  fontSizeSmall: 13,
   fontSizeMedium: 16,
   fontSizeLarge: 20,
   fontSizeExtraLarge: 32,

@@ -6,6 +6,7 @@ import { Header } from "~/components/Header";
 import { useStore } from "~/mobx/utils/useStore";
 import { CreateRecordingScreen } from "~/screens/CreateRecordingScreen/CreateRecordingScreen";
 import { RecordingListScreen } from "~/screens/RecordingListScreen/RecordingListScreen";
+import { CreateSoundboardScreen } from "~/screens/SoundboardListScreen/CreateSoundboardScreen";
 import { SoundboardListScreen } from "~/screens/SoundboardListScreen/SoundboardListScreen";
 import { TopLevelStackParams } from "./RouterTypes";
 
@@ -41,6 +42,12 @@ export const Router = observer(function Router() {
           name="RecordingListScreen"
           component={RecordingListScreen}
           options={{ title: "Recordings" }}
+        />
+
+        <Stack.Screen
+          name="CreateSoundboardScreen"
+          component={CreateSoundboardScreen}
+          options={{ title: "Create a soundboard" }}
         />
       </Stack.Navigator>
     </NavigationContainer>

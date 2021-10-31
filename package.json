@@ -34,7 +34,8 @@
     "react-native-permissions": "3.0.5",
     "react-native-safe-area-context": "3.3.2",
     "react-native-screens": "3.7.2",
-    "react-native-unimodules": "0.14.8",
+    "react-native-unimodules": "0.14.10",
+    "react-native-vector-icons": "9.0.0",
     "react-query": "3.23.2",
     "yup": "0.32.9"
   },
@@ -45,6 +46,7 @@
     "@types/color": "3.0.2",
     "@types/jest": "^26.0.23",
     "@types/react-native": "^0.65.0",
+    "@types/react-native-vector-icons": "6.4.9",
     "@types/react-test-renderer": "^17.0.1",
     "@types/yup": "0.29.13",
     "@typescript-eslint/eslint-plugin": "4.31.1",

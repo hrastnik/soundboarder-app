@@ -38,6 +38,7 @@ export const Button = forwardRef<TouchableOpacity, ButtonProps>(
       isLoading: isLoadingProp,
       setIsLoading: setIsLoadingProp,
       disabled,
+      style: styleProp,
       ...otherProps
     } = props;
 
@@ -87,14 +88,17 @@ export const Button = forwardRef<TouchableOpacity, ButtonProps>(
           )}
           <TouchableOpacity
             ref={ref}
-            style={{
-              height: 52,
-              borderRadius: 26,
-              justifyContent: "center",
-              alignItems: "center",
-              borderWidth: 2,
-              borderColor: "#440A68",
-            }}
+            style={[
+              {
+                height: 52,
+                borderRadius: 26,
+                justifyContent: "center",
+                alignItems: "center",
+                borderWidth: 2,
+                borderColor: "#440A68",
+              },
+              styleProp,
+            ]}
             onPress={handlePress}
             disabled={isLoading || disabled}
             {...otherProps}

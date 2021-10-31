@@ -55,6 +55,8 @@ export const Recording = types
       getAudio: flow(function* getAudio(): any {
         if (self.audio) return self.audio;
 
+        console.log("URI", self.uri);
+
         const audio: {
           sound: Audio.Sound;
           status: AVPlaybackStatus;
