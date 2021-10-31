@@ -13,9 +13,9 @@ const S = StyleSheet.create({
   baseStyle: {
     padding: C.spacingMedium,
     margin: 0,
-    minHeight: 40,
+    minHeight: 49,
     backgroundColor: C.colorBackgroundLightDark,
-    borderRadius: 8,
+    borderRadius: 4,
     borderColor: C.colorTextTheme,
     borderWidth: StyleSheet.hairlineWidth,
   },

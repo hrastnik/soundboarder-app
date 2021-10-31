@@ -1,168 +1,132 @@
-import React, { ReactNode, useState, forwardRef, useEffect } from "react";
-import { TextStyle, StyleSheet, TouchableWithoutFeedback } from "react-native";
-
+import _ from "lodash";
+import React, { forwardRef, ReactNode, useEffect, useState } from "react";
 import {
-  TouchableOpacity,
-  TouchableOpacityProps,
-} from "~/components/TouchableOpacity";
+  GestureResponderEvent,
+  StyleSheet,
+  TouchableWithoutFeedback,
+} from "react-native";
 import { Modal } from "~/components/ModalProvider";
 import { Spacer } from "~/components/Spacer";
 import { Spinner } from "~/components/Spinner";
 import { Text } from "~/components/Text";
+import {
+  TouchableOpacity,
+  TouchableOpacityProps,
+} from "~/components/TouchableOpacity";
 import { View } from "~/components/View";
-import { shadow } from "~/utils/shadow";
-
 import { constants as C } from "~/style/constants";
 
 export interface ButtonProps extends TouchableOpacityProps {
-  title?: string;
-  small?: boolean;
   outline?: boolean;
-  transparent?: boolean;
-  colorDanger?: boolean;
-  colorTheme?: boolean;
-  colorAccent?: boolean;
+  title?: string;
   children?: ReactNode;
   onPress?:
     | TouchableOpacityProps["onPress"]
-    | ((...args: any[]) => Promise<any>);
+    | ((event: GestureResponderEvent) => Promise<any>);
+  isLoading?: boolean;
+  setIsLoading?: (isLoading: boolean) => any;
   blockUi?: boolean;
 }
 export type Button = typeof Button;
 export const Button = forwardRef<TouchableOpacity, ButtonProps>(
-  (
-    {
-      title,
-
-      small = false,
+  (props, ref) => {
+    const {
       outline = false,
-      transparent = false,
-      colorDanger = false,
-      colorTheme = false,
-      colorAccent = false,
-
-      style: inheritedStyle,
-      disabled,
-      children,
+      title,
       onPress,
-      blockUi = true,
-      ...props
-    },
-    ref
-  ) => {
+      children,
+      isLoading: isLoadingProp,
+      setIsLoading: setIsLoadingProp,
+      disabled,
+      ...otherProps
+    } = props;
+
     const isMounted = React.useRef<boolean>(true);
-    useEffect(() => {
-      return () => {
+    useEffect(
+      () => () => {
         isMounted.current = false;
-      };
-    }, []);
+      },
+      []
+    );
+
+    const [isLoadingState, setIsLoadingState] = useState(false); //
+    const isLoading =
+      "isLoading" in otherProps ? isLoadingProp : isLoadingState;
+    const setIsLoading =
+      ("isLoading" in otherProps ? setIsLoadingProp : setIsLoadingState) ??
+      _.noop;
+
+    const handlePress: TouchableOpacityProps["onPress"] = (event) => {
+      if (typeof onPress === "function") {
+        const maybePromise = onPress(event);
+
+        if (maybePromise && typeof maybePromise.then === "function") {
+          setIsLoading(true);
+          maybePromise.finally(() => isMounted.current && setIsLoading(false));
+        }
+      }
+    };
 
     const shouldRenderTitle = typeof title === "string";
 
-    const resolveBackgroundColor = () => {
-      if (outline) return "transparent";
-      if (transparent) return "transparent";
-
-      if (colorDanger) return C.colorBackgroundDanger;
-      else if (colorTheme) return C.colorBackgroundTheme;
-      else if (colorAccent) return C.colorBackgroundAccent;
-
-      return C.colorBackgroundTheme;
-    };
-
-    const resolvePadding = () => {
-      if (small) return C.spacingSmall;
-      return C.spacingMedium;
-    };
-
-    const resolveTextStyle = () => {
-      const style: TextStyle = {};
-      if (small) style.fontSize = C.fontSizeSmall;
-      else style.fontSize = C.fontSizeMedium;
-
-      if (outline || transparent) {
-        if (colorDanger) style.color = C.colorTextDanger;
-        else if (colorTheme) style.color = C.colorTextTheme;
-        else if (colorAccent) style.color = C.colorTextAccent;
-        else style.color = C.colorTextTheme;
-      } else {
-        style.color = C.colorTextLight;
-      }
-
-      return style;
-    };
-
-    const resolveBorderColor = () => {
-      if (outline) return resolveTextStyle().color;
-      if (transparent) return "transparent";
-      if (colorDanger) return C.colorBackgroundDanger;
-      if (colorTheme) return C.colorBackgroundTheme;
-      if (colorAccent) return C.colorBackgroundAccent;
-      return C.colorBackgroundTheme;
-    };
-
-    const resolveShadow = () => {
-      return 0;
-    };
-
-    const [isLoading, setIsLoading] = useState(false);
-
-    const borderRadius = 8; // shared between the button and the spinner overlay
-    const style: TouchableOpacityProps["style"] = {
-      flexDirection: "row",
-      justifyContent: "center", // ideja kod dodavanja ikona -> children != null ? "flex-start" : "center"
-      alignItems: "center",
-      backgroundColor: resolveBackgroundColor(),
-      borderColor: resolveBorderColor(),
-      borderWidth: 1,
-      padding: resolvePadding(),
-      borderRadius,
-      ...shadow(resolveShadow()),
-      opacity: isLoading || disabled ? 0.5 : 1,
-    };
-
-    const textStyle = resolveTextStyle();
-
     return (
       <>
-        <TouchableOpacity
-          ref={ref}
-          style={[style, inheritedStyle]}
-          onPress={(event) => {
-            if (typeof onPress === "function") {
-              const maybePromise = onPress(event);
-
-              if (maybePromise && typeof maybePromise.then === "function") {
-                setIsLoading(true);
-                maybePromise.finally(
-                  () => isMounted.current && setIsLoading(false)
-                );
-              }
-            }
-          }}
-          disabled={isLoading || disabled}
-          {...props}
-        >
-          <>
+        <View>
+          {!outline && (
+            <View
+              style={{
+                ...StyleSheet.absoluteFillObject,
+                transform: [{ translateX: -2 }, { translateY: -6 }],
+                height: 52,
+                borderRadius: 26,
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundColor: "#F9D549",
+              }}
+            />
+          )}
+          <TouchableOpacity
+            ref={ref}
+            style={{
+              height: 52,
+              borderRadius: 26,
+              justifyContent: "center",
+              alignItems: "center",
+              borderWidth: 2,
+              borderColor: "#440A68",
+            }}
+            onPress={handlePress}
+            disabled={isLoading || disabled}
+            {...otherProps}
+          >
             {children}
             {Boolean(children && shouldRenderTitle) && <Spacer small />}
             {shouldRenderTitle && (
-              <Text numberOfLines={1} style={textStyle}>
+              <Text
+                style={{
+                  fontWeight: "600",
+                  fontSize: 16,
+                  lineHeight: 25,
+                  color: "#440A68",
+                }}
+                numberOfLines={1}
+              >
                 {title}
               </Text>
             )}
-          </>
-          {isLoading && (
-            <View
-              centerContent
-              style={{ ...StyleSheet.absoluteFillObject, borderRadius }}
-            >
-              <Spinner size="small" color={C.colorTextDarkSoft} />
-            </View>
-          )}
-        </TouchableOpacity>
 
-        {Boolean(blockUi && isLoading) && (
+            {isLoading && (
+              <View
+                centerContent
+                style={{ ...StyleSheet.absoluteFillObject, borderRadius: 26 }}
+              >
+                <Spinner size="small" color={C.colorTextDarkSoft} />
+              </View>
+            )}
+          </TouchableOpacity>
+        </View>
+
+        {Boolean(isLoading) && (
           <Modal blockHardwareBackButton>
             <TouchableWithoutFeedback>
               <View flex />

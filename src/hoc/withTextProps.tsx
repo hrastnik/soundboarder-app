@@ -106,7 +106,7 @@ export function withTextProps<Props extends { style?: any }>(
         style.lineHeight = 30;
       } else if (sizeExtraLarge) {
         style.fontSize = C.fontSizeExtraLarge;
-        style.lineHeight = 32;
+        style.lineHeight = 46.5;
       }
 
       style.color = C.colorTextDark;
