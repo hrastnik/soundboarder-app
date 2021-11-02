@@ -1,31 +1,29 @@
-import dayjs from "dayjs";
+import { useNavigation } from "@react-navigation/native";
 import { observer } from "mobx-react";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useQueryClient } from "react-query";
 import { Button } from "~/components/Button";
-import { Icon } from "~/components/Icon";
 import { Modal } from "~/components/ModalProvider";
 import { Spacer } from "~/components/Spacer";
-import { Text } from "~/components/Text";
 import { TextInput } from "~/components/TextInput";
 import { View } from "~/components/View";
 import { useAlert } from "~/hooks/useAlert";
 import { useDropdown } from "~/hooks/useDropdown";
-import { RecordingInstance } from "~/mobx/entities/recording/Recording";
-import { constants } from "~/style/constants";
+import { getEnv } from "~/mobx/utils/getEnv";
+import { useStore } from "~/mobx/utils/useStore";
 import { promptYesNo } from "~/utils/promptYesNo";
 import { shadow } from "~/utils/shadow";
 
-export const RecordingListItem = observer(function RecordingListItem({
-  recording,
+export const SoundboardListItem = observer(function SoundboardListItem({
+  soundboard,
 }: {
-  recording: RecordingInstance;
+  soundboard: string;
 }) {
   const alert = useAlert();
+  const store = useStore();
+  const env = getEnv(store);
   const client = useQueryClient();
-  useEffect(() => {
-    recording.getAudio();
-  }, [recording]);
+  const navigation = useNavigation();
 
   const [shouldGrabName, setShouldGrabName] = useState(false);
   const [name, setName] = useState("");
@@ -38,14 +36,23 @@ export const RecordingListItem = observer(function RecordingListItem({
         const shouldRemove = await promptYesNo(
           {
             title: "Warning",
-            message: "Are your sure you want to delete this recording?",
+            message: "Are your sure you want to delete this soundboard?",
           },
           alert
         );
         if (!shouldRemove) return;
 
-        await recording.delete();
-        await client.refetchQueries(["recordingList"]);
+        const currentName = `${env.fs.dirs.DocumentDir}/${soundboard}`;
+        try {
+          await env.fs.unlink(currentName);
+          await client.refetchQueries(["soundboardList"]);
+        } catch (error) {
+          alert(
+            "Error",
+            "Something went wrong while trying to delete soundboard\n\n" +
+              String(error)
+          );
+        }
       }
       if (index === 1) {
         setShouldGrabName(true);
@@ -56,32 +63,20 @@ export const RecordingListItem = observer(function RecordingListItem({
   return (
     <>
       <Button
+        title={soundboard}
         outline
-        onPress={recording.play}
+        onPress={() => {
+          navigation.navigate("RecordingListScreen", {
+            soundboard: soundboard,
+          });
+        }}
         onLongPress={() => {
           showDropdown();
         }}
-        colorTheme={recording.isPlaying}
-        title={recording.basename}
-        flexDirectionRowReverse
-        paddingHorizontalLarge
-      >
-        <Icon size={18} name="play" color={constants.colorTextDark} />
+      />
 
-        <Spacer large />
-
-        <Text>
-          {recording.audio?.status.isLoaded
-            ? dayjs()
-                .startOf("day")
-                .add(recording.audio.status.durationMillis ?? 0, "ms")
-                .format("mm:ss")
-            : "-"}
-        </Text>
-
-        <View flex />
-      </Button>
       {renderedOptions}
+
       {shouldGrabName && (
         <Modal>
           <View
@@ -108,8 +103,28 @@ export const RecordingListItem = observer(function RecordingListItem({
               <Button
                 title="Save"
                 onPress={async function renameRecording() {
-                  await recording.rename(name);
-                  await client.refetchQueries(["recordingList"]);
+                  const currentName = `${env.fs.dirs.DocumentDir}/${soundboard}`;
+                  const newName = `${env.fs.dirs.DocumentDir}/${name}`;
+                  const doesExist = await env.fs.exists(newName);
+                  if (doesExist) {
+                    alert(
+                      "Error",
+                      "A soundboard with that name already exists."
+                    );
+
+                    return;
+                  }
+
+                  try {
+                    await env.fs.mv(currentName, newName);
+                    await client.refetchQueries(["soundboardList"]);
+                  } catch (error) {
+                    alert(
+                      "Error",
+                      "Something went wrong while trying to rename soundboard\n\n" +
+                        String(error)
+                    );
+                  }
                 }}
               />
 

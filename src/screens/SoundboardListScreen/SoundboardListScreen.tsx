@@ -12,6 +12,7 @@ import { View } from "~/components/View";
 import { useQuery } from "~/hooks/useQuery";
 import { useStore } from "~/mobx/utils/useStore";
 import { constants } from "~/style/constants";
+import { SoundboardListItem } from "./SoundboardListItem";
 
 function useSoundboardList({ enabled }: { enabled: boolean }) {
   const store = useStore();
@@ -74,17 +75,7 @@ export const SoundboardListScreen = observer(function SoundboardListScreen() {
             padding: constants.spacingMedium,
           }}
           renderItem={({ item: soundboard }) => {
-            return (
-              <Button
-                title={soundboard}
-                outline
-                onPress={() => {
-                  navigation.navigate("RecordingListScreen", {
-                    soundboard: soundboard,
-                  });
-                }}
-              />
-            );
+            return <SoundboardListItem soundboard={soundboard} />;
           }}
           ItemSeparatorComponent={() => <Spacer large />}
           onRefresh={query.onRefresh}

@@ -90,7 +90,8 @@ export const RecordingStore = types
             .filter((fileOrDir) => fileOrDir.isDir)
             .map((v) => v.path);
 
-          return dirList;
+          const orderedDirList = _.orderBy(dirList);
+          return orderedDirList;
         }
       ),
     };

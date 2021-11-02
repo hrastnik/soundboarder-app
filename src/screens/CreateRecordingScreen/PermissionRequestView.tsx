@@ -1,53 +1,38 @@
-import { observable, runInAction } from "mobx";
 import { observer } from "mobx-react";
 import React, { useEffect } from "react";
-import {
-  checkMultiple,
-  PERMISSIONS,
-  PermissionStatus,
-  request,
-} from "react-native-permissions";
+import { checkMultiple, PERMISSIONS, request } from "react-native-permissions";
+import { useQuery, useQueryClient } from "react-query";
 import { Button } from "~/components/Button";
+import { Spacer } from "~/components/Spacer";
+import { Text } from "~/components/Text";
 import { View } from "~/components/View";
-
-const permissionState = observable({
-  recordAudio: undefined as undefined | PermissionStatus,
-  writeExternalStorage: undefined as undefined | PermissionStatus,
-  readExternalStorage: undefined as undefined | PermissionStatus,
-});
 
 export const PermissionRequestView = observer(function PermissionRequestView({
   setArePermissionAccepted: propSetArePermissionsAccepted,
 }: {
   setArePermissionAccepted: (value: boolean) => any;
 }) {
-  useEffect(() => {
+  const client = useQueryClient();
+  const query = useQuery(
+    ["permissions"],
     async function requestPermissionsEffect() {
-      console.warn("Check multiple");
-
       const checkResult = await checkMultiple([
         PERMISSIONS.ANDROID.RECORD_AUDIO,
         PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
         PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE,
       ]);
 
-      console.warn("Check multiple", checkResult);
+      const isAccepted =
+        checkResult["android.permission.RECORD_AUDIO"] === "granted" &&
+        checkResult["android.permission.READ_EXTERNAL_STORAGE"] === "granted" &&
+        checkResult["android.permission.WRITE_EXTERNAL_STORAGE"] === "granted";
 
-      runInAction(() => {
-        permissionState.recordAudio =
-          checkResult["android.permission.RECORD_AUDIO"];
-        permissionState.readExternalStorage =
-          checkResult["android.permission.READ_EXTERNAL_STORAGE"];
-        permissionState.writeExternalStorage =
-          checkResult["android.permission.WRITE_EXTERNAL_STORAGE"];
-      });
+      return isAccepted;
     }
-    requestPermissionsEffect();
-  }, []);
-
-  const isAccepted = Object.values(permissionState).every(
-    (v) => v === "granted"
   );
+
+  const isAccepted = query.data === true;
+
   useEffect(() => {
     console.warn(isAccepted);
 
@@ -59,31 +44,62 @@ export const PermissionRequestView = observer(function PermissionRequestView({
 
   return (
     <View flex paddingMedium>
+      <View paddingHorizontalLarge>
+        <Text>
+          In order for Soundboarder to work, it needs some permissions...
+        </Text>
+      </View>
+      <Spacer extraLarge />
+      <Spacer extraLarge />
+
+      <View paddingHorizontalLarge>
+        <Text>
+          We need audio recording permissions to enable you record audio for
+          your soundboards.
+        </Text>
+      </View>
+      <Spacer large />
       <Button
-        title="Request RECORD_AUDIO permission"
+        title="Grant recording permission"
         onPress={async () => {
-          const requestResult = await request(PERMISSIONS.ANDROID.RECORD_AUDIO);
-          permissionState.recordAudio = requestResult;
+          await request(PERMISSIONS.ANDROID.RECORD_AUDIO);
+          client.invalidateQueries(["permissions"]);
         }}
       />
 
+      <Spacer extraLarge />
+      <Spacer medium />
+
+      <View paddingHorizontalLarge>
+        <Text>
+          We need storage write access so we can save the recordings to your
+          phone.
+        </Text>
+      </View>
+      <Spacer large />
       <Button
-        title="Request WRITE_EXTERNAL_STORAGE permission"
+        title="Grant storage write permission"
         onPress={async () => {
-          const requestResult = await request(
-            PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE
-          );
-          permissionState.writeExternalStorage = requestResult;
+          await request(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE);
+          client.invalidateQueries(["permissions"]);
         }}
       />
 
+      <Spacer extraLarge />
+      <Spacer medium />
+
+      <View paddingHorizontalLarge>
+        <Text>
+          We need storage read access so we can load the recordings already
+          saved on your phone.
+        </Text>
+      </View>
+      <Spacer large />
       <Button
-        title="Request READ_EXTERNAL_STORAGE permission"
+        title="Grant storage read permission"
         onPress={async () => {
-          const requestResult = await request(
-            PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE
-          );
-          permissionState.writeExternalStorage = requestResult;
+          await request(PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE);
+          client.invalidateQueries(["permissions"]);
         }}
       />
     </View>

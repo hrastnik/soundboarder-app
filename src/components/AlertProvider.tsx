@@ -46,7 +46,6 @@ const S = StyleSheet.create({
     borderRadius: 8,
     ...shadow(4),
   },
-  buttonsContainer: { flexDirection: "row-reverse" },
 });
 
 interface AlertProviderProps {
@@ -89,13 +88,12 @@ export function AlertProvider({ children, ...otherProps }: AlertProviderProps) {
       <React.Fragment key={button.text}>
         {index !== 0 && <Spacer medium />}
         <Button
-          transparent
           title={button.text}
+          outline={button.style === "destructive"}
           onPress={() => {
+            setAlertVisible(false);
             return button.onPress?.();
           }}
-          style={{ flex: 1 }}
-          colorDanger={button.style === "destructive"}
         />
       </React.Fragment>
     );
@@ -127,13 +125,9 @@ export function AlertProvider({ children, ...otherProps }: AlertProviderProps) {
                       <Text>{body}</Text>
                     </View>
                   )}
-                  <View
-                    paddingVerticalMedium
-                    style={[S.buttonsContainer, buttonsContainerStyle]}
-                  >
+                  <View paddingVerticalMedium style={buttonsContainerStyle}>
                     {buttonsRender.length === 0 ? (
                       <Button
-                        transparent
                         title="OK"
                         onPress={() => {
                           setAlertVisible(false);

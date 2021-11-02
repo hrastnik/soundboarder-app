@@ -1,4 +1,5 @@
 import { Audio, AVPlaybackStatus } from "expo-av";
+import _ from "lodash";
 import {
   flow,
   Instance,
@@ -6,6 +7,7 @@ import {
   SnapshotOut,
   types,
 } from "mobx-state-tree";
+import { getEnv } from "~/mobx/utils/getEnv";
 
 export interface RecordingInstance extends Instance<typeof Recording> {}
 export interface RecordingSnapshotIn extends SnapshotIn<typeof Recording> {}
@@ -84,33 +86,27 @@ export const Recording = types
   })
   .views((self) => {
     return {
+      get extension() {
+        const parts = self.filename.split(".");
+        if (parts.length >= 2)
+          return ("." + self.filename.split(".").pop()) as string;
+        return "";
+      },
+
       get basename() {
         const parts = self.filename.split(".");
-        parts.pop();
-        const basename = parts.join(".");
+        if (parts.length >= 2) {
+          parts.pop();
+          const basename = parts.join(".");
+          if (!basename)
+            throw new Error("Basename can't be derived from uri: " + self.uri);
+          return basename;
+        }
 
-        if (!basename)
-          throw new Error("Basename can't be derived from uri: " + self.uri);
-
-        return basename;
+        return self.filename;
       },
     };
   })
-  .views((self) => {
-    return {
-      get basename() {
-        const parts = self.filename.split(".");
-        parts.pop();
-        const basename = parts.join(".");
-
-        if (!basename)
-          throw new Error("Basename can't be derived from uri: " + self.uri);
-
-        return basename;
-      },
-    };
-  })
-
   .actions((self) => {
     return {
       play: flow(function* play(): any {
@@ -119,6 +115,24 @@ export const Recording = types
         if (!self.audio) throw new Error("Audio not ready");
 
         yield self.audio.sound.replayAsync();
+      }),
+    };
+  })
+  .actions((self) => {
+    return {
+      rename: flow<void, [string]>(function* rename(name: string): any {
+        const env = getEnv(self);
+        const path = _.trimEnd(self.uri, self.filename);
+        const newPath = path + name + self.extension;
+        yield env.fs.mv(self.uri, newPath);
+      }),
+    };
+  })
+  .actions((self) => {
+    return {
+      delete: flow<void, []>(function* deleteRecording(): any {
+        const env = getEnv(self);
+        yield env.fs.unlink(self.uri);
       }),
     };
   });

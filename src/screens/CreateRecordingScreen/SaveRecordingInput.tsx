@@ -19,6 +19,7 @@ export const SaveRecordingInput = observer(function SaveRecordingInput({
       <View flexDirectionRow alignItemsFlexEnd>
         <View flex>
           <TextInput
+            autoFocus
             value={title}
             onChangeText={setTitle}
             withoutCaption

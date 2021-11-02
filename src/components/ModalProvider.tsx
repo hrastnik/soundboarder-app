@@ -29,8 +29,8 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
   return (
     <ModalContext.Provider value={push.current}>
       {children}
-      {contentList.map(({ content, key }) => (
-        <TouchableWithoutFeedback key={key} style={{}}>
+      {contentList.map(({ content }, index) => (
+        <TouchableWithoutFeedback key={index.toString()}>
           <View style={StyleSheet.absoluteFill}>{content}</View>
         </TouchableWithoutFeedback>
       ))}

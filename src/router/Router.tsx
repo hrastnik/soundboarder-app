@@ -6,7 +6,7 @@ import { Header } from "~/components/Header";
 import { useStore } from "~/mobx/utils/useStore";
 import { CreateRecordingScreen } from "~/screens/CreateRecordingScreen/CreateRecordingScreen";
 import { RecordingListScreen } from "~/screens/RecordingListScreen/RecordingListScreen";
-import { CreateSoundboardScreen } from "~/screens/SoundboardListScreen/CreateSoundboardScreen";
+import { CreateSoundboardScreen } from "~/screens/CreateSoundboardScreen/CreateSoundboardScreen";
 import { SoundboardListScreen } from "~/screens/SoundboardListScreen/SoundboardListScreen";
 import { TopLevelStackParams } from "./RouterTypes";
 

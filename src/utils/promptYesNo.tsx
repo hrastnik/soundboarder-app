@@ -11,8 +11,8 @@ const promptYesNo = (
     message,
     yesText = "Yes",
     noText = "No",
-    yesStyle = "default",
-    noStyle = "cancel",
+    yesStyle = "destructive",
+    noStyle = "destructive",
   }: {
     title: string;
     message: string;
