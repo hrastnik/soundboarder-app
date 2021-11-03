@@ -1,5 +1,5 @@
 import { types, Instance, SnapshotIn, SnapshotOut } from "mobx-state-tree";
-import Color from "color";
+import { colord } from "colord";
 import { Platform, StatusBar } from "react-native";
 import { autorun } from "mobx";
 
@@ -27,7 +27,7 @@ export const UIStore = types
         }
         autorun(() => {
           StatusBar.setBarStyle(
-            Color(self.safeAreaBackgroundColor).isLight()
+            colord(self.safeAreaBackgroundColor).isLight()
               ? "dark-content"
               : "light-content"
           );

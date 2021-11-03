@@ -1,6 +1,6 @@
 import React from "react";
 import { Platform, Image, ImageProps, ImageSourcePropType } from "react-native";
-import Color from "color";
+import { colord } from "colord";
 import { observer } from "mobx-react";
 
 import { Text, TextProps } from "~/components/Text";
@@ -52,7 +52,7 @@ export const Avatar = observer(
     };
 
     const textStyle: TextProps["style"] = {
-      color: Color(C.colorBackgroundTheme).isDark()
+      color: colord(C.colorBackgroundTheme).isDark()
         ? C.colorTextLight
         : C.colorTextDark,
       fontSize: size * 0.6,

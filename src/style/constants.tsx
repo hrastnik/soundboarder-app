@@ -1,5 +1,5 @@
 import { Dimensions } from "react-native";
-import Color from "color";
+import { colord } from "colord";
 
 const window = Dimensions.get("window");
 
@@ -18,48 +18,40 @@ export const constants = {
   colorBackgroundLight,
   colorBackgroundDark,
   colorBackgroundDanger: "#ff4444",
-  colorBackgroundThemeSoft: Color(colorBackgroundTheme)
+  colorBackgroundThemeSoft: colord(colorBackgroundTheme)
     .lighten(0.25)
-    .rgb()
-    .string(2),
-  colorBackgroundThemeSofter: Color(colorBackgroundTheme)
+    .toRgbString(),
+  colorBackgroundThemeSofter: colord(colorBackgroundTheme)
     .lighten(0.5)
-    .rgb()
-    .string(2),
-  colorBackgroundThemeHard: Color(colorBackgroundTheme)
+    .toRgbString(),
+  colorBackgroundThemeHard: colord(colorBackgroundTheme)
     .darken(0.25)
-    .rgb()
-    .string(2),
-  colorBackgroundThemeHarder: Color(colorBackgroundTheme)
+    .toRgbString(),
+  colorBackgroundThemeHarder: colord(colorBackgroundTheme)
     .darken(0.5)
-    .rgb()
-    .string(2),
-  colorBackgroundLightDark: Color(colorBackgroundLight)
+    .toRgbString(),
+  colorBackgroundLightDark: colord(colorBackgroundLight)
     .darken(0.015)
-    .rgb()
-    .string(2),
-  colorBackgroundLightDarker: Color(colorBackgroundLight)
+    .toRgbString(),
+  colorBackgroundLightDarker: colord(colorBackgroundLight)
     .darken(0.25)
-    .rgb()
-    .string(2),
-  colorBackgroundDarkLight: Color(colorBackgroundDark)
+    .toRgbString(),
+  colorBackgroundDarkLight: colord(colorBackgroundDark)
     .lighten(0.15)
-    .rgb()
-    .string(2),
-  colorBackgroundDarkLighter: Color(colorBackgroundDark)
+    .toRgbString(),
+  colorBackgroundDarkLighter: colord(colorBackgroundDark)
     .lighten(0.25)
-    .rgb()
-    .string(2),
+    .toRgbString(),
 
   colorTextTheme: "#308CC3",
   colorTextAccent: "#ba0000",
   colorTextLight,
   colorTextDark,
   colorTextDanger: "#ff4444",
-  colorTextLightSoft: Color(colorTextLight).fade(0.3).rgb().string(2),
-  colorTextLightSofter: Color(colorTextLight).fade(0.5).rgb().string(2),
-  colorTextDarkSoft: Color(colorTextDark).fade(0.3).rgb().string(2),
-  colorTextDarkSofter: Color(colorTextDark).fade(0.5).rgb().string(2),
+  colorTextLightSoft: colord(colorTextLight).darken(0.3).toRgbString(),
+  colorTextLightSofter: colord(colorTextLight).darken(0.5).toRgbString(),
+  colorTextDarkSoft: colord(colorTextDark).lighten(0.3).toRgbString(),
+  colorTextDarkSofter: colord(colorTextDark).lighten(0.5).toRgbString(),
 
   spacingSmall: 4,
   spacingMedium: 8,
